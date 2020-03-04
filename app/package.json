@@ -1,0 +1,15 @@
+{
+  "name": "animl-app",
+  "version": "0.1.0",
+  "description": "Backend application for camera trap data management platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnc-ca-geo/animl/tree/master/app"
+  },
+  "author": "Nathaniel Rindlaub",
+  "license": "MIT"
+}
