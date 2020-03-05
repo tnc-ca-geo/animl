@@ -4,7 +4,7 @@
   "description": "Cloud-based platform for managing camera trap data",
   "main": "index.js",
   "scripts": {
-    "start-app": "npm devstart --prefix app",
+    "start-app": "npm run devstart --prefix app",
     "start-all": "concurrently --kill-others-on-fail \"npm run start-app\" \"npm run start-frontend-async\"",
     "start-frontend-solo": "npm start --prefix frontend",
     "start-frontend-async": "node start-frontend-async.js"
