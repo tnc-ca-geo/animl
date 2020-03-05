@@ -4,7 +4,10 @@
   "description": "Cloud-based platform for managing camera trap data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-app": "npm devstart --prefix app",
+    "start-all": "concurrently --kill-others-on-fail \"npm run start-app\" \"npm run start-frontend-async\"",
+    "start-frontend-solo": "npm start --prefix frontend",
+    "start-frontend-async": "node start-frontend-async.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/tnc-ca-geo/animl/issues"
   },
-  "homepage": "https://github.com/tnc-ca-geo/animl#readme"
+  "homepage": "https://github.com/tnc-ca-geo/animl#readme",
+  "dependencies": {
+    "concurrently": "^5.1.0"
+  }
 }

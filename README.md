@@ -4,11 +4,14 @@ A platform for managing camera trap data
 ## Table of Contents
 
 - [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
+- [Development](#usage)
 
 ## Overview
 
-## Installation
+## Development
 
-## Usage
+### Start backend Express app and frontend React app concurrently
+
+```sh
+npm run start-all
+```
