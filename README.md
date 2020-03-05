@@ -8,6 +8,8 @@ A platform for managing camera trap data
 
 ## Overview
 
+![dataflow diagram](/assets/camera-trap-data-pipeline.jpg)
+
 ## Development
 
 ### Start backend Express app and frontend React app concurrently
