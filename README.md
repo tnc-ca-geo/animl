@@ -1,10 +1,12 @@
 # animl
 A platform for managing camera trap data
 
-## Table of Contents
+## Related repos
 
-- [Overview](#overview)
-- [Development](#usage)
+- Animl base program      http://github.com/tnc-ca-geo/animl-base
+- Animl lambda function   http://github.com/tnc-ca-geo/animl-lambda
+- Animl ML resources      http://github.com/tnc-ca-geo/animl-ml
+- Animl desktop app       https://github.com/tnc-ca-geo/animl-desktop
 
 ## Overview
 
