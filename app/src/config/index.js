@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 // assign it to process.env.
 dotenv.config();
 
-export default {
+module.exports = {
   port: process.env.PORT,
-  databaseURL: process.env.DATABASE_URI,
+  databaseURL: process.env.DB_URI,
   // paypal: {
   //   publicKey: process.env.PAYPAL_PUBLIC_KEY,
   //   secretKey: process.env.PAYPAL_SECRET_KEY,
