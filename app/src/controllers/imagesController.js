@@ -23,13 +23,18 @@ const Image = require('../models/image');
 // Handle image create on POST.
 exports.image_create_post = async function(req, res) {
   console.log('requeset body: ', req.body)
-  const data = req.body;
+
+  const data = req.body,
+        dateTimeOriginal = moment(data.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss'),
+        dateString = moment(dateTimeOriginal).format('YYYY-MM-DD:hh-mm-ss'),
+        id = data.SerialNumber + ':' + dateString;
 
   let image = new Image({
+    image_id:             id,        
     serial_number:        data.SerialNumber,
     file_name:            data.FileName,
     file_path:            data.Path,
-    date_time_original:   moment(data.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss'),
+    date_time_original:   dateTimeOriginal,
     make:                 data.Make,
     model:                data.Model,
     image_width:          data.ImageWidth,

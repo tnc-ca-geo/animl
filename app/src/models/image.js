@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 let ImageSchema = new Schema(
   {
+    image_id:           { type: String, required: true },
     serial_number:      { type: String, required: true },
     file_name:          { type: String, required: true },
     file_path:          { type: String, required: true },
