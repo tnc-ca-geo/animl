@@ -58,11 +58,13 @@ npm run start-all
 ```
 
 ### Some tips for testing the API endponts
-You can use Postman to make requests to localhost, for example, to test saving an image, send a POST request to ```http://localhost:8080/api/v1/images/save``` with the following body: 
+You can use Postman to make requests to localhost. For example, to test saving an image, send a POST request to ```http://localhost:8080/api/v1/images/save``` with the following body: 
 
 ```json
 {"FileName": "1c566221-0795-4f9c-a337-d8f81f9ec938p_003048.jpg20191002.jpg", "MIMEType": "image/jpeg", "Make": "BuckEyeCam", "Model": "X7D", "DateTimeOriginal": "2019:10:02 08:39:49", "SerialNumber": "X01002E7", "ImageWidth": 1280, "ImageHeight": 960, "Megapixels": 1.2, "text_1": "-122.228118", "text_2": "37.406889", "Path": "p_003048.jpg20191002.jpg"}
 ```
 
-If you want to test real requests being made from the [animl-lambda function](http://github.com/tnc-ca-geo/animl-lambda), [ngrok](https://ngrok.com/) is a super cool tool for safely creating a tunnel from the external internet to your localhost. It's free, super east to set up, and will allow you to view and interact with real requests coming in in real time. _NOTE: with the free version of ngrok, you don't get persistent tunnel URLs, so if you do this, you'll have to replace the ```ANIML_IMG_API``` constant at the top of [animl-lambda/lambda_function.py]](https://github.com/tnc-ca-geo/animl-lambda/blob/master/lambda_function.py) with the new tunnel URL ngrok gives you and upate the live lambda function._
+If you want to test real requests being made from the [animl-lambda function](http://github.com/tnc-ca-geo/animl-lambda), [ngrok](https://ngrok.com/) is a super cool tool for safely creating a tunnel from the external internet to your localhost. It's free, fast to set up, and will allow you to view and interact with real requests coming in in real time without deploying the app to a hosted environment. 
+
+_NOTE: with the free version of ngrok, you don't get persistent tunnel URLs, so if you do this, you'll have to replace the ```ANIML_IMG_API``` constant at the top of [animl-lambda/lambda_function.py]](https://github.com/tnc-ca-geo/animl-lambda/blob/master/lambda_function.py) with the new tunnel URL ngrok gives you and upate the live lambda function._
 
