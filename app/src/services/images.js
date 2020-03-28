@@ -1,13 +1,14 @@
 const moment = require('moment');
 const ImageModel = require('../models/image');
+const AWS = require('aws-sdk');
+const config = require('../config');
 
 class ImageService {
   constructor() {
-    this.model = ImageModel
+    this.model = ImageModel;
   }
-  
-  async saveImage(data) {
 
+  async saveImage(data) {
     const dateTimeOg = moment(data.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss'),
           dateStr = moment(dateTimeOg).format('YYYY-MM-DD:hh-mm-ss'),
           id = data.SerialNumber + ':' + dateStr;
@@ -34,18 +35,27 @@ class ImageService {
       image.user_label_1 = data.UserLabel;
     }
 
-    try {
-      const savedImage = await image.save();
-      console.log('saved image: ', savedImage);
-      return savedImage;
-    } catch(err) {
-      return err;
-    }
+    const savedImage = await image.save();
+    return savedImage;
         
   }
 
   async getImages(data) {
     console.log('getting images');
+  }
+
+  async detectObjects(imageData) {
+    const modelConfig = config.models.megadetector.v1;
+    const sageMakerRuntime = new AWS.SageMakerRuntime();
+    let params = {
+      Body: new Buffer(imageData.Path),
+      EndpointName: modelConfig.endpointName,
+      ContentType: 'application/json',
+    };
+    sageMakerRuntime.invokeEndpoint(params, function(err, data) {
+      const responseData = JSON.parse(Buffer.from(data.Body).toString('utf8'));
+      console.log(responseData.predictions[0].detection_classes);
+    });
   }
 
 }

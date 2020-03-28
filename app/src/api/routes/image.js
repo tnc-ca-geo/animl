@@ -14,6 +14,7 @@ const imageRouter = (app) => {
       try {
         const imageServiceInstance = new ImagesService;
         const savedImage = await imageServiceInstance.saveImage(req.body);
+        const objects = await imageServiceInstance.detectObjects(req.body)
         return res.status(201).end('saved image metadata');
       } catch (e) {
         // logger.error('🔥 error: %o', e);
