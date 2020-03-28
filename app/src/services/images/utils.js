@@ -1,5 +1,5 @@
 const moment = require('moment');
-const ImageModel = require('../../../models/image');
+const ImageModel = require('../../models/image');
 
 const makeId = (metaData) => {
   const dateTimeOg = moment(metaData.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss');

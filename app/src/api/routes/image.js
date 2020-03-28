@@ -1,5 +1,6 @@
 const express = require('express');
 const ImagesService = require('../../services/images');
+const MLService = require('../../services/ml');
 
 const route = express.Router();
 
@@ -13,8 +14,9 @@ const imageRouter = (app) => {
     async (req, res, next) => {
       try {
         const imageServiceInstance = new ImagesService;
+        const mlServiceInstance = new MLService;
         const savedImage = await imageServiceInstance.saveImage(req.body);
-        await imageServiceInstance.detectObjects(req.body, savedImage._id);
+        await mlServiceInstance.detectObjects(req.body, savedImage._id);
         return res.status(201).end('saved image metadata');
       } catch (e) {
         // logger.error('🔥 error: %o', e);

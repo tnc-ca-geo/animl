@@ -14,6 +14,13 @@ const config = {
       v1: {
         endpointName: 'sagemaker-tensorflow-serving-2020-03-27-03-18-29-899',
         renderThreshold: 0.8,
+        categories: {
+          0: 'empty',
+          1: 'animal',
+          2: 'person',
+          3: 'group-of-animals',
+          4: 'vehicle'
+        },
       }
     }
   },

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 let DetectionSchema = new Schema(
   {
-    category: { type: Number },
+    category: { type: String },
     conf:     { type: Number },
     bbox:     { type: [Number], requred: true },
   }

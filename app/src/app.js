@@ -9,7 +9,9 @@ const routes = require('./api');
 
 let app = express();
 
-mongoose.connect(config.databaseURL, { useNewUrlParser: true });
+mongoose.connect(
+  config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true }
+);
 mongoose.set('useFindAndModify', false);
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
