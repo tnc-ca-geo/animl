@@ -14,31 +14,31 @@ const mapMetaToModel = (metaData) => {
   const id = makeId(metaData);
 
   let image = new ImageModel({
-    image_id:             id,
-    serial_number:        metaData.SerialNumber,
-    file_name:            metaData.FileName,
-    file_path:            metaData.Path,
-    date_added:           moment(),
-    date_time_original:   dateTimeOg,
-    make:                 metaData.Make,
-    model:                metaData.Model,
-    image_width:          metaData.ImageWidth,
-    image_height:         metaData.ImageHeight,
-    megapixels:           metaData.Megapixels,
-    mime_type:            metaData.MIMEType,
+    imageId:             id,
+    serialNnumber:       metaData.SerialNumber,
+    fileName:            metaData.FileName,
+    filePath:            metaData.Path,
+    dateAdded:           moment(),
+    dateTimeOriginal:    dateTimeOg,
+    make:                metaData.Make,
+    model:               metaData.Model,
+    imageWidth:          metaData.ImageWidth,
+    imageHeight:         metaData.ImageHeight,
+    megapixels:          metaData.Megapixels,
+    mimeType:            metaData.MIMEType,
   });
 
   if (metaData.Make === 'BuckEyeCam') {
-    image.user_label_1 = metaData.text_1;
-    image.user_label_2 = metaData.text_2;
-    image.location = {
-      // TODO: parse coordinate strings into decimal degrees
-      coordinates: [metaData.GPSLongitude, GPSLatitude],  
-      altitude: metaData.GPSAltitude,
-    }
+    // image.user_label_1 = metaData.text_1;
+    // image.user_label_2 = metaData.text_2;
+    // image.location = {
+    //   // TODO: parse coordinate strings into decimal degrees
+    //   coordinates: [metaData.GPSLongitude, GPSLatitude],  
+    //   altitude: metaData.GPSAltitude,
+    // }
   } 
   else if (metaData.Make === 'RECONYX') {
-    image.user_label_1 = metaData.UserLabel;
+    // image.user_label_1 = metaData.UserLabel;
   }
 
   return image;

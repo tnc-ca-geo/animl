@@ -6,6 +6,7 @@ const logger = require('morgan');
 const config = require('./config');
 const mongoose = require('mongoose');
 const routes = require('./api');
+const deploymentUtils = require('./services/deployments/utils');
 
 let app = express();
 
@@ -22,8 +23,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(config.api.prefix, routes());
+
+// Create a deployment and model record if they don't exist
+// TODO: the deployment record is just for testing. remove later
+async function createDeployment(depConfig) {
+  const conflict = await deploymentUtils.checkDeploymentConflict(depConfig);
+  if (!conflict) {
+    const deployment = deploymentUtils.createDeploymentRecord(depConfig)
+    deployment.save();
+  }
+};
+config.deployments.forEach(dep => createDeployment(dep));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

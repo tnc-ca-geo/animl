@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 
 /*
  * ModelPerformanceSchema
- * invocation_count - number of times the model has been invoked
- * correct_count  - number of times a reviewer validated the prediciton 
- * incorrect_count - number of times a reviewer invalidated the prediciton 
+ * invocationCount - number of times the model has been invoked
+ * correctCount  - number of times a reviewer validated the prediciton 
+ * incorrectCount - number of times a reviewer invalidated the prediciton 
  */
 
 let ModelPerformanceSchema = new Schema({
-  invocation_count:      { type: Number },
-  validation_count:      { type: Number },
-  invalidation_count:    { type: Number },
+  invocationCount:      { type: Number },
+  validationCcount:      { type: Number },
+  invalidationCount:    { type: Number },
 });
 
 /*

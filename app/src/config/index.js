@@ -6,6 +6,11 @@ dotenv.config();
 const config = {
   port: process.env.PORT,
   databaseURL: process.env.DB_URI,
+  aws: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.REGION,
+  },
   api: {
     prefix: '/api/v1/',
   },
@@ -24,11 +29,24 @@ const config = {
       }
     }
   },
-  aws: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.REGION,
-  },
+  deployments: [
+    {
+      name: 'nattys alley',
+      description: 'test deployment in the alley next to nattys house',
+      location: {
+        geometry: {
+          type:'Point',
+          coordinates: [-118.20408225059509, 34.10711648356844],
+        }
+      },
+      camera: {
+        make: 'BuckEyeCam',
+        model: 'X7D',
+        serialNumber: 'X0110642', 
+      },
+      start: '2020-3-24',
+    }
+  ]
 };
 
 module.exports = config;

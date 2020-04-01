@@ -8,8 +8,8 @@ let DeploymentSchema = new Schema({
   description:  { type: String },
   location:     { type: shared.LocationSchema },
   camera:       { type: shared.CameraSchema, required: true },
-  start_date:   { type: Date, required: true },
-  end_date:     { type: Date, required: false },
+  start:        { type: Date, required: true },
+  end:          { type: Date, required: false },
 });
 
 
