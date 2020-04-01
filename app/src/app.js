@@ -7,6 +7,7 @@ const config = require('./config');
 const mongoose = require('mongoose');
 const routes = require('./api');
 const deploymentUtils = require('./services/deployments/utils');
+const mlUtils = require('./services/ml/utils');
 
 let app = express();
 
@@ -25,16 +26,31 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(config.api.prefix, routes());
 
-// Create a deployment and model record if they don't exist
+// Create a deployment and model record from config if they don't exist
 // TODO: the deployment record is just for testing. remove later
 async function createDeployment(depConfig) {
   const conflict = await deploymentUtils.checkDeploymentConflict(depConfig);
   if (!conflict) {
-    const deployment = deploymentUtils.createDeploymentRecord(depConfig)
+    const deployment = deploymentUtils.createDeploymentRecord(depConfig);
     deployment.save();
   }
 };
+
+async function createMLModel(modelConfig) {
+  const currModel = await mlUtils.getModel(modelConfig);
+  if (!currModel.length) {
+    const model = mlUtils.createModelRecord(modelConfig);
+    model.save();
+  }
+};
+
 config.deployments.forEach(dep => createDeployment(dep));
+config.models.forEach(model => createMLModel(model));
+
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

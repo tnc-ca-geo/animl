@@ -9,9 +9,9 @@ const Schema = mongoose.Schema;
  */
 
 let ModelPerformanceSchema = new Schema({
-  invocationCount:      { type: Number },
-  validationCcount:      { type: Number },
-  invalidationCount:    { type: Number },
+  invocationCount:      { type: Number, required: true, default: 0 },
+  validationCcount:     { type: Number, required: true, default: 0 },
+  invalidationCount:    { type: Number, required: true, default: 0 },
 });
 
 /*
@@ -22,13 +22,13 @@ let ModelPerformanceSchema = new Schema({
  */
 
 let ModelSchema = new Schema({
-  name:             { type: String, required: true },
-  description:      { type: String },
-  endpointName:     { type: String, required: true },
-  version:          { type: String, required: true },
-  renderThreshold:  { type: Number },
-  categories:       { type: Map },
-  performance:      { type: ModelPerformanceSchema }
+  name:                 { type: String, required: true },
+  description:          { type: String },
+  endpointName:         { type: String, required: true },
+  version:              { type: String, required: true },
+  renderThreshold:      { type: Number },
+  categories:           { type: Map },
+  performance:          { type: ModelPerformanceSchema }
 });
 
 

@@ -1,3 +1,6 @@
+const ModelModel = require('../../models/model');
+
+
 const parseDetectorResponse = (data, modelConfig) => {
   const responseData = JSON.parse(Buffer.from(data.Body).toString('utf8'));
   const pred = responseData.predictions[0];
@@ -17,7 +20,18 @@ const parseDetectorResponse = (data, modelConfig) => {
   return detections;
 };
 
+async function getModel(modelConfig) {
+  return await ModelModel.find({ 
+    'name': modelConfig.name,
+    'version': modelConfig.version
+  });
+};
+
+const createModelRecord = (modelConfig) => new ModelModel(modelConfig);
+
 
 module.exports = {
   parseDetectorResponse,
+  getModel,
+  createModelRecord,
 }

@@ -2,8 +2,6 @@ const moment = require('moment');
 const DeploymentModel = require('../../models/deployment');
 
 
-const createDeploymentRecord = (config) => new DeploymentModel(config);
-
 // check for deployment date range overlap
 async function checkDeploymentConflict(depConfig) {
   const currDeps = await DeploymentModel.find({ 
@@ -11,7 +9,7 @@ async function checkDeploymentConflict(depConfig) {
   });
   if (!currDeps) { return false; }
   let newDep = {
-    start: moment(depConfig.start),
+    start: moment(depConfig.start, 'YYYY-MM-DD'),
     end: depConfig.end ? moment(depConfig.end) : moment()
   };
   return currDeps.some(currDep => {
@@ -21,6 +19,8 @@ async function checkDeploymentConflict(depConfig) {
     return lastStart <= firstEnd;
   });
 };
+
+const createDeploymentRecord = (config) => new DeploymentModel(config);
 
 
 module.exports = {
