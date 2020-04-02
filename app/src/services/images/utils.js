@@ -1,51 +1,95 @@
 const moment = require('moment');
 const ImageModel = require('../../models/image');
+const config = require('../../config')
 
 
-const makeId = (metaData) => {
-  const dateTimeOg = moment(metaData.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss');
-  const dateStr = moment(dateTimeOg).format('YYYY-MM-DD:hh-mm-ss');
-  const id = metaData.SerialNumber + ':' + dateStr;
+// Create ID out of image timestamp and camera serial number
+const makeId = (md, format = config.timeFormats) => {
+  const dateTimeOg = moment(md.DateTimeOriginal, format.exif);
+  const dateStr = moment(dateTimeOg).format(format.imageId);
+  const id = md.SerialNumber + ':' + dateStr;
   return id;
-}
+};
 
-const mapMetaToModel = (metaData) => {
-  const dateTimeOg = moment(metaData.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss');
-  const id = makeId(metaData);
+// Unpack user-set exif data
+// NOTE: exif tags for storing user data are different for each camera make
+const getUserSetData = (md) => {
+  const userDataMap = {
+    BuckEyeCam: (md) => {
+      let userData = {};
+      md.Comment.split('\n').forEach(item => {
+        if (item.includes('TEXT1') || item.includes('TEXT2') ) {
+          userData[item.split('=')[0]] = item.split('=')[1];
+        }
+      });
+      return userData;
+    },
+    RECONYX: (md) => { userLabel: md.UserLabel },
+  };
+  const usd = userDataMap[md.Make](md);
+  return usd ? usd : {};
+};
 
-  let image = new ImageModel({
-    imageId:             id,
-    serialNnumber:       metaData.SerialNumber,
-    fileName:            metaData.FileName,
-    filePath:            metaData.Path,
-    dateAdded:           moment(),
-    dateTimeOriginal:    dateTimeOg,
-    make:                metaData.Make,
-    model:               metaData.Model,
-    imageWidth:          metaData.ImageWidth,
-    imageHeight:         metaData.ImageHeight,
-    megapixels:          metaData.Megapixels,
-    mimeType:            metaData.MIMEType,
+// Parse string coordinates to decimal degrees
+// input e.g. - `34 deg 6' 25.59" N`
+const parseCoordinates = (md) => {
+  function parse(stringCoord) {
+    let deg, min, sec;
+    [deg, min, sec] = stringCoord.match(/[+-]?(\d*\.)?\d+/g);
+    const cardinal = stringCoord.match(/[N|S|E|W]$/g)[0];
+    let degrees = Number(deg) + Number(min)/60 + Number(sec)/3600;
+    return (cardinal === 'S' || cardinal === 'W') ? degrees * -1 : degrees;
+  };
+
+  return (md.GPSLongitude && md.GPSLatitude) 
+    ? [ parse(md.GPSLongitude), parse(md.GPSLatitude) ]
+    : null;
+};
+
+// Map image metadata to image schema
+const mapMetaToModel = (md, format = config.timeFormats) => {
+  console.log('mapping metadata to model');
+  
+  const dateTimeOg = moment(md.DateTimeOriginal, format.exif),
+        id = makeId(md),
+        coords = parseCoordinates(md),
+        userSetData = getUserSetData(md);
+
+  const camera = {    
+    serialNumber: md.SerialNumber,
+    make: md.Make,
+    ...(md.Model && { model: md.Model}),
+  };
+
+  const location = coords && {
+    geometry: { type: 'Point', coordinates: coords },
+    ...(md.GPSAltitude && { altitude: md.GPSAltitude}),
+  };
+  
+  const image = new ImageModel({
+    imageId: id,
+    filePath: md.key,
+    bucket: md.bucket,
+    objectKey: md.key,
+    dateAdded: moment(),
+    dateTimeOriginal: dateTimeOg,
+    deployment: md.deployment,
+    camera: camera,
+    // optional fields
+    ...(md.key          && { originalFileName: md.key }),
+    ...(md.ImageWidth   && { imageWidth: md.ImageWidth }),
+    ...(md.ImageHeight  && { imageHeight: md.ImageHeight}),
+    ...(md.MIMEType     && { mimeType: md.MIMEType }),
+    ...(userSetData     && { userSetData: userSetData }),
+    ...(location        && { location: location }),
   });
 
-  if (metaData.Make === 'BuckEyeCam') {
-    // image.user_label_1 = metaData.text_1;
-    // image.user_label_2 = metaData.text_2;
-    // image.location = {
-    //   // TODO: parse coordinate strings into decimal degrees
-    //   coordinates: [metaData.GPSLongitude, GPSLatitude],  
-    //   altitude: metaData.GPSAltitude,
-    // }
-  } 
-  else if (metaData.Make === 'RECONYX') {
-    // image.user_label_1 = metaData.UserLabel;
-  }
-
   return image;
-}
+  
+};
 
 
 module.exports = {
   makeId,
   mapMetaToModel,
-}
+};

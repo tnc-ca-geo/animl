@@ -4,13 +4,12 @@ const DeploymentModel = require('../../models/deployment');
 
 // check for deployment date range overlap
 async function checkDeploymentConflict(depConfig) {
-  const currDeps = await DeploymentModel.find({ 
-    'camera.serialNumber': depConfig.camera.serialNumber,
-  });
+  const sn = depConfig.camera.serialNumber;
+  const currDeps = await DeploymentModel.find({ 'camera.serialNumber': sn });
   if (!currDeps) { return false; }
   let newDep = {
     start: moment(depConfig.start, 'YYYY-MM-DD'),
-    end: depConfig.end ? moment(depConfig.end) : moment()
+    end: depConfig.end ? moment(depConfig.end, 'YYYY-MM-DD') : moment()
   };
   return currDeps.some(currDep => {
     currDep.end = currDep.end ? currDep.end : moment();

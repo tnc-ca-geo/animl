@@ -11,13 +11,13 @@ const PointSchema = new Schema({
 let LocationSchema = new Schema({
   geometry:            { type: PointSchema, required: true },
   altitude:            { type: String },
-  azimuth:             { type: Number },
+  // azimuth:             { type: Number },
 });
 
 let CameraSchema = new Schema({
   make:                { type: String, default: 'unknown', required: true },
   model:               { type: String },
-  serialNumber:       { type: String, required: true },
+  serialNumber:        { type: String, required: true },
 });
 
 

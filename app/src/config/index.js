@@ -4,18 +4,29 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const config = {
+
   port: process.env.PORT,
+  
   databaseURL: process.env.DB_URI,
+
   aws: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.REGION,
   },
+
   api: {
     prefix: '/api/v1/',
   },
+  
+  timeFormats: {
+    exif: 'YYYY:MM:DD hh:mm:ss',
+    imageId: 'YYYY-MM-DD:hh-mm-ss',
+  },
+
   models: [
     {
+      // need some unique ID for this
       name: 'megadetector',
       version: '3',
       endpointName: 'sagemaker-tensorflow-serving-2020-03-27-03-18-29-899',
@@ -30,6 +41,7 @@ const config = {
       },
     }
   ],
+
   deployments: [
     {
       name: 'nattys alley',
@@ -42,12 +54,30 @@ const config = {
       },
       camera: {
         make: 'BuckEyeCam',
-        model: 'X7D',
-        serialNumber: 'X0110642', 
+        model: 'X80',
+        serialNumber: 'X8114566', 
       },
       start: '2020-3-24',
+    },
+    {
+      name: 'Jasper Ridge',
+      description: 'Images from Jasper Ridge biological preserve',
+      location: {
+        geometry: {
+          type:'Point',
+          coordinates: [-122.228118, 37.406889],
+        }
+      },
+      camera: {
+        make: 'BuckEyeCam',
+        model: 'X7D',
+        serialNumber: 'X01002E7', 
+      },
+      start: '2017-1-1',
+      end: '2020-1-1',
     }
   ]
+
 };
 
 module.exports = config;
