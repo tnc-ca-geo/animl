@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const shared = require('./shared')
 const Schema = mongoose.Schema;
 
+
 /*
  * ValidationSchema
  * reviewed - has the image been reviewed by a user
@@ -41,7 +42,7 @@ let LabelSchema = new Schema({
  */
 
 let ImageSchema = new Schema({
-  imageId:             { type: String, required: true },
+  // hash:                { type: String, required: true },
   filePath:            { type: String, required: true },
   bucket:              { type: String, required: true },
   objectKey:           { type: String, required: true },
@@ -51,17 +52,26 @@ let ImageSchema = new Schema({
   imageWidth:          { type: Number },
   imageHeight:         { type: Number },
   mimeType:            { type: String },
-  userSetData:            { type: Map, of: String },
+  userSetData:         { type: Map, of: String },
   camera:              { type: shared.CameraSchema, required: true },
   location:            { type: shared.LocationSchema },
   labels:              { type: [LabelSchema] },
-  deployment: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'Deployment', 
-    required: true 
+  deployment:          { 
+    type: Schema.Types.ObjectId,
+    ref: 'Deployment',
+    required: true
   },
 });
 
-ImageSchema.index({ deployment: 1 })
+ImageSchema.index(
+  { 'camera.serialNumber': 1, dateTimeOriginal: -1 }, 
+  { unique: true, sparse: true }
+);
+
+ImageSchema.index({ deployment: 1 });
+
+ImageSchema.on('index', function(error) {
+  console.log('indexing error', error.message);
+});
 
 module.exports = mongoose.model('Image', ImageSchema);

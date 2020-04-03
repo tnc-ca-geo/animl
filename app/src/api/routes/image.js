@@ -14,29 +14,15 @@ const imageRouter = (app) => {
     imagesMiddleware.validateFields,
     async (req, res, next) => {
       try {
-        let md = req.body;
-        const imgService = new ImagesService;
-        const mlService = new MLService;
-
-        // Make sure image hasn't already been stored
-        const existingRecord = await imgService.getImage(md);
-        if (existingRecord) {
-          console.log('found an existing image in db, throwing error')
-          throw new Error('Duplicate warning! Image already saved in DB');
-        }
-
-        // Determine what deployment an image belongs to
-        const deployment = await imgService.mapToDeployment(md);
-        if (!deployment) {
-          throw new Error('Unable to find deployment for this image');
-        }
-        md.deployment = deployment._id;
-
+        
         // Save image
-        const savedImage = await imgService.saveImage(md);
+        const imgService = new ImagesService(req.body);
+        await imgService.init();
+        await imgService.saveImage();
 
         // Kick off detection job
-        mlService.detectObjects(savedImage);
+        const mlService = new MLService(imgService.md, 'megadetector');
+        await mlService.detectObjects();
         
         return res.status(201).end('saved image metadata');
 
@@ -51,7 +37,6 @@ const imageRouter = (app) => {
   route.get(
     '/',
     async (req, res, next) => {
-      console.log('requeset body: ', req.body)
       const imageServiceInstance = new ImagesService;
       const images = imageService.getImages(req);
       return res.status(202).json(images);

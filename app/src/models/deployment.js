@@ -12,5 +12,10 @@ let DeploymentSchema = new Schema({
   end:          { type: Date, required: false },
 });
 
+DeploymentSchema.index(
+  { name: 1 },
+  { unique: true },
+  { sparse: true }
+);
 
 module.exports = mongoose.model('Deployment', DeploymentSchema);

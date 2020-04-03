@@ -20,18 +20,10 @@ const parseDetectorResponse = (data, modelConfig) => {
   return detections;
 };
 
-async function getModel(modelConfig) {
-  return await ModelModel.find({ 
-    'name': modelConfig.name,
-    'version': modelConfig.version
-  });
-};
-
 const createModelRecord = (modelConfig) => new ModelModel(modelConfig);
 
 
 module.exports = {
   parseDetectorResponse,
-  getModel,
   createModelRecord,
 }

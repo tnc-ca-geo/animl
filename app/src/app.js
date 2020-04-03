@@ -7,7 +7,7 @@ const config = require('./config');
 const mongoose = require('mongoose');
 const routes = require('./api');
 const deploymentUtils = require('./services/deployments/utils');
-const mlUtils = require('./services/ml/utils');
+const MLService = require('./services/ml');
 
 let app = express();
 
@@ -36,21 +36,11 @@ async function createDeployment(depConfig) {
   }
 };
 
-async function createMLModel(modelConfig) {
-  const currModel = await mlUtils.getModel(modelConfig);
-  if (!currModel.length) {
-    const model = mlUtils.createModelRecord(modelConfig);
-    model.save();
-  }
-};
-
 config.deployments.forEach(dep => createDeployment(dep));
-config.models.forEach(model => createMLModel(model));
-
-
-
-
-
+config.models.forEach(model => {
+  const mlService = new MLService({}, model.name);
+  mlService.saveModel();
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

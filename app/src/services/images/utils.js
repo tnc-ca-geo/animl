@@ -3,30 +3,37 @@ const ImageModel = require('../../models/image');
 const config = require('../../config')
 
 
-// Create ID out of image timestamp and camera serial number
-const makeId = (md, format = config.timeFormats) => {
-  const dateTimeOg = moment(md.DateTimeOriginal, format.exif);
-  const dateStr = moment(dateTimeOg).format(format.imageId);
-  const id = md.SerialNumber + ':' + dateStr;
-  return id;
+const prepMetaData = (md) => {
+  let mdProcessed = {};
+  // If second char in key is uppercase, 
+  // assume it's an acronym & leave it, else camel case the key
+  for (let key in md) {
+    const newKey = !(key.charAt(1) == key.charAt(1).toUpperCase())
+      ? key.charAt(0).toLowerCase() + key.slice(1)
+      : key;
+    mdProcessed[newKey] = md[key];
+  };
+  const dto = moment(mdProcessed.dateTimeOriginal, config.timeFormats.exif);
+  mdProcessed.dateTimeOriginal = dto;
+  console.log(mdProcessed)
+  return mdProcessed;
 };
 
-// Unpack user-set exif data
-// NOTE: exif tags for storing user data are different for each camera make
+// Unpack user-set exif tags
 const getUserSetData = (md) => {
   const userDataMap = {
     BuckEyeCam: (md) => {
       let userData = {};
-      md.Comment.split('\n').forEach(item => {
+      md.comment.split('\n').forEach(item => {
         if (item.includes('TEXT1') || item.includes('TEXT2') ) {
           userData[item.split('=')[0]] = item.split('=')[1];
         }
       });
       return userData;
     },
-    RECONYX: (md) => { userLabel: md.UserLabel },
+    RECONYX: (md) => { userLabel: md.userLabel },
   };
-  const usd = userDataMap[md.Make](md);
+  const usd = userDataMap[md.make](md);
   return usd ? usd : {};
 };
 
@@ -42,23 +49,20 @@ const parseCoordinates = (md) => {
   };
 
   return (md.GPSLongitude && md.GPSLatitude) 
-    ? [ parse(md.GPSLongitude), parse(md.GPSLatitude) ]
+    ? [parse(md.GPSLongitude), parse(md.GPSLatitude)]
     : null;
 };
 
 // Map image metadata to image schema
-const mapMetaToModel = (md, format = config.timeFormats) => {
-  console.log('mapping metadata to model');
+const mapMetaToModel = (md) => {
   
-  const dateTimeOg = moment(md.DateTimeOriginal, format.exif),
-        id = makeId(md),
-        coords = parseCoordinates(md),
+  const coords = parseCoordinates(md),
         userSetData = getUserSetData(md);
 
   const camera = {    
-    serialNumber: md.SerialNumber,
-    make: md.Make,
-    ...(md.Model && { model: md.Model}),
+    serialNumber: md.serialNumber,
+    make: md.make,
+    ...(md.model && { model: md.model}),
   };
 
   const location = coords && {
@@ -67,18 +71,18 @@ const mapMetaToModel = (md, format = config.timeFormats) => {
   };
   
   const image = new ImageModel({
-    imageId: id,
+    // hash: md.hash,
     filePath: md.key,
     bucket: md.bucket,
     objectKey: md.key,
     dateAdded: moment(),
-    dateTimeOriginal: dateTimeOg,
+    dateTimeOriginal: md.dateTimeOriginal,
     deployment: md.deployment,
     camera: camera,
     // optional fields
     ...(md.key          && { originalFileName: md.key }),
-    ...(md.ImageWidth   && { imageWidth: md.ImageWidth }),
-    ...(md.ImageHeight  && { imageHeight: md.ImageHeight}),
+    ...(md.imageWidth   && { imageWidth: md.imageWidth }),
+    ...(md.imageHeight  && { imageHeight: md.imageHeight}),
     ...(md.MIMEType     && { mimeType: md.MIMEType }),
     ...(userSetData     && { userSetData: userSetData }),
     ...(location        && { location: location }),
@@ -90,6 +94,6 @@ const mapMetaToModel = (md, format = config.timeFormats) => {
 
 
 module.exports = {
-  makeId,
+  prepMetaData,
   mapMetaToModel,
 };

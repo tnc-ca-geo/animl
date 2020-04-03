@@ -3,39 +3,69 @@ const moment = require('moment');
 const utils = require('./utils');
 const ImageModel = require('../../models/image');
 const DeploymentModel = require('../../models/deployment');
+const config = require('../../config');
 
 
 class ImageService {
 
-  async getImage(metaData) {
-    const imageId = utils.makeId(metaData);
-    const foundImages = await ImageModel.find({ 'imageId': imageId });
-    return foundImages[0];
+  constructor(imageMetaData) {
+    this.formats = config.timeFormats;
+    this.imageMetaData = imageMetaData;
+    this.md = {};
+  }
+
+  async init() {
+    try {
+      this.md = utils.prepMetaData(this.imageMetaData);
+      this.md.deployment = await this.mapToDeployment();
+    } catch {
+      throw new Error('Unable to find deployment for this image');
+    }
+  };
+
+  async getImage() {
+    try {
+      const foundImages = await ImageModel.find({
+        'camera.serialNumber': this.md.serialNumber,
+        'dateTimeOriginal': this.md.dateTimeOriginal
+      });
+      return foundImages[0];
+    } catch {
+      throw new Error('Error retireving image');
+    }
   };
   
-  async saveImage(metaData) {
-    console.log('saving image');
-    const image = utils.mapMetaToModel(metaData);
-    const savedImage = await image.save();
-    return savedImage;
-  };
-
-  async mapToDeployment(metaData) {
-    console.log('mapping image to deployment');
-    const dto = moment(metaData.DateTimeOriginal, 'YYYY:MM:DD hh:mm:ss');
-    const sn = metaData.SerialNumber;
-    const deployments = await DeploymentModel.find({'camera.serialNumber': sn});
-    const deploymentMatch = deployments.filter(dep => {
-      dep.end = dep.end ? dep.end : moment();
-      return dto >= dep.start && dto <= dep.end;
-    })[0];
-    if (!deploymentMatch) {
-      console.log('couldn\'t find a registered deployment for this image!')
+  async saveImage() {
+    try {
+      const newImage = utils.mapMetaToModel(this.md);
+      await newImage.save();
+      console.log('saved image successfully');
+    } catch {
+      throw new Error('Error saving image');
     }
-    return deploymentMatch;
   };
 
-}
+  async mapToDeployment() {
+    try {
+      const dto = this.md.dateTimeOriginal;
+      const sn = this.md.serialNumber;
+      const deployments = await DeploymentModel.find({
+        'camera.serialNumber': sn 
+      });
+      const deploymentMatch = deployments.filter(dep => {
+        dep.end = dep.end ? dep.end : moment();
+        return dto >= dep.start && dto <= dep.end;
+      })[0];
+      if (!deploymentMatch) {
+        console.log('couldn\'t find a registered deployment for this image!');
+      }
+      return deploymentMatch;
+    } catch {
+      throw new Error('Error mapping image to corresponding deployment')
+    }
+  };
+
+};
 
 
 module.exports = ImageService;

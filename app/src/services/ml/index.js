@@ -1,49 +1,91 @@
 const AWS = require('aws-sdk');
 const moment = require('moment');
 const ImageModel = require('../../models/image');
+const ModelModel = require('../../models/model');
 const utils = require('./utils');
 const config = require('../../config');
 
 
 class MLService {
 
-  async createLabels(predictions, modelConfig) {
-    const model = await utils.getModel(modelConfig);
-    return predictions.map(pred => ({
-      type: 'ml',
-      category: pred.category,
-      conf: pred.conf,
-      bbox: pred.bbox,
-      labeledDate: moment(),
-      model: model[0]._id
-    }))
+  constructor(imageMetaData, modelName) {
+    this.md = imageMetaData;
+    this.modelConfig = config.models.filter(m => m.name === modelName)[0];
   };
 
-  async handlePrediction(pred, image, modelConfig) {
-    console.log('handling returned prediction');
-    const detections = utils.parseDetectorResponse(pred, modelConfig);
-    const labels = await this.createLabels(detections, modelConfig);
-    console.log('labels: ', labels);
-    ImageModel.find({ 'imageId': image.imageId }, (err, response) => {
-      image.labels = image.labels.concat(labels);
-      image.save();
-    });
-    return detections;
+  async getModel() {
+    try {
+      return await ModelModel.find({ 
+        'name': this.modelConfig.name,
+        'version': this.modelConfig.version
+      });
+    } catch {
+      throw new Error('Error finding model record');
+    }
   };
 
-  async detectObjects(image, models = config.models) {
-    console.log('detecting objects');
-    const modelConfig = models.filter(m => m.name === 'megadetector')[0];
-    const sageMakerRuntime = new AWS.SageMakerRuntime();
-    const detections = sageMakerRuntime.invokeEndpoint({
-      Body: Buffer.from(image.objectKey),
-      EndpointName: modelConfig.endpointName,
-      ContentType: 'application/json',
-    }, (err, data) => {
-      if (err) { throw new Error('Bad response from sagemaker') };
-      this.handlePrediction(data, image, modelConfig);
-    });
-    return detections;
+  async saveModel() {
+    try {
+      const currModel = await this.getModel(this.modelConfig);
+      if (!currModel.length) {
+        const newModel = new ModelModel(this.modelConfig)
+        await newModel.save();
+      }
+    } catch {
+      throw new Error('Error saving model record');
+    }
+  };
+
+  async createLabels(predictions) {
+    try {
+      const model = await this.getModel();
+      return predictions.map(pred => ({
+        type: 'ml',
+        category: pred.category,
+        conf: pred.conf,
+        bbox: pred.bbox,
+        labeledDate: moment(),
+        model: model[0]._id
+      }));
+    } catch {
+      throw new Error('Error creating labels from ML predictions');
+    }
+  };
+
+  async handlePrediction(response) {
+    try {
+      const detections = utils.parseDetectorResponse(response, this.modelConfig);
+      const labels = await this.createLabels(detections, this.modelConfig);
+      const query = { 
+        'camera.serialNumber': this.md.serialNumber,
+        'dateTimeOriginal': this.md.dateTimeOriginal,
+      };
+      ImageModel.find(query, (err, response) => {
+        let imageRecord = response[0];
+        imageRecord.labels = imageRecord.labels.concat(labels);
+        imageRecord.save();
+      });
+      return detections;
+    } catch {
+      throw new Error('Error updating the image with new labels')
+    }
+  };
+
+  async detectObjects() {
+    try {
+      const sageMakerRuntime = new AWS.SageMakerRuntime();
+      const detections = sageMakerRuntime.invokeEndpoint({
+        Body: Buffer.from(this.md.key),
+        EndpointName: this.modelConfig.endpointName,
+        ContentType: 'application/json',
+      }, (err, response) => {
+        if (err) { throw new Error('Bad response from sagemaker') };
+        this.handlePrediction(response);
+      });
+      return detections;
+    } catch {
+      throw new Error('Error invoking model endpoint');
+    }
   };
 
 };

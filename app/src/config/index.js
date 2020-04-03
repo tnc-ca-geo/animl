@@ -21,7 +21,7 @@ const config = {
   
   timeFormats: {
     exif: 'YYYY:MM:DD hh:mm:ss',
-    imageId: 'YYYY-MM-DD:hh-mm-ss',
+    // imageId: 'YYYY-MM-DD:hh-mm-ss',
   },
 
   models: [
