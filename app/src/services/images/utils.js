@@ -15,7 +15,6 @@ const prepMetaData = (md) => {
   };
   const dto = moment(mdProcessed.dateTimeOriginal, config.timeFormats.exif);
   mdProcessed.dateTimeOriginal = dto;
-  console.log(mdProcessed)
   return mdProcessed;
 };
 

@@ -2,7 +2,7 @@ const moment = require('moment');
 const DeploymentModel = require('../../models/deployment');
 
 
-// check for deployment date range overlap
+// Check for deployment date range overlap
 async function checkDeploymentConflict(depConfig) {
   const sn = depConfig.camera.serialNumber;
   const currDeps = await DeploymentModel.find({ 'camera.serialNumber': sn });

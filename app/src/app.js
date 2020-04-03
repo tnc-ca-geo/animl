@@ -6,7 +6,7 @@ const logger = require('morgan');
 const config = require('./config');
 const mongoose = require('mongoose');
 const routes = require('./api');
-const deploymentUtils = require('./services/deployments/utils');
+const DeploymentService = require('./services/deployments');
 const MLService = require('./services/ml');
 
 let app = express();
@@ -28,17 +28,12 @@ app.use(config.api.prefix, routes());
 
 // Create a deployment and model record from config if they don't exist
 // TODO: the deployment record is just for testing. remove later
-async function createDeployment(depConfig) {
-  const conflict = await deploymentUtils.checkDeploymentConflict(depConfig);
-  if (!conflict) {
-    const deployment = deploymentUtils.createDeploymentRecord(depConfig);
-    deployment.save();
-  }
-};
-
-config.deployments.forEach(dep => createDeployment(dep));
-config.models.forEach(model => {
-  const mlService = new MLService({}, model.name);
+config.deployments.forEach(depConfig => {
+  const deploymentService = new DeploymentService(depConfig);
+  deploymentService.saveDeployment();
+});
+config.models.forEach(modelConfig => {
+  const mlService = new MLService({}, modelConfig.name);
   mlService.saveModel();
 });
 
