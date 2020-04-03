@@ -1,14 +1,14 @@
 # Animl
 A platform for managing camera trap data
 
-## Related repos
+## `Related repos`
 
 - Animl base program      http://github.com/tnc-ca-geo/animl-base
 - Animl lambda function   http://github.com/tnc-ca-geo/animl-lambda
 - Animl ML resources      http://github.com/tnc-ca-geo/animl-ml
 - Animl desktop app       https://github.com/tnc-ca-geo/animl-desktop
 
-## Overview
+## `Overview`
 
 Animl is an open, extensible, cloud-based platform for managing camera trap data.
 We are developing this platform because there currently are no software tools that allow 
@@ -25,7 +25,7 @@ perform manual labeling
 
 ![dataflow diagram](/assets/camera-trap-data-pipeline.jpg)
 
-## Development
+## `Development`
 
 ### Clone the repo and add a .env file
 We use dotenv to manage secrets, so you'll need to create your own in the ```animl/app``` directory with the following fields:
