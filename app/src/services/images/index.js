@@ -45,6 +45,7 @@ class ImageService {
     try {
       const newImage = utils.mapMetaToModel(this.md);
       await newImage.save();
+      console.log('saved new image record')
     } catch {
       throw new Error('Error saving image');
     }

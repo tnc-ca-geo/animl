@@ -20,32 +20,32 @@ const imageRouter = (app) => {
         const imgService = new ImagesService(req.body);
         await imgService.init();
         await imgService.saveImage();
+        res.status(201).send('saved image metadata');
 
         // Kick off detection job
         const metadata = imgService.metadata;
         const mlService = new MLService(metadata, 'megadetector');
+        mlService.init();
         await mlService.detectObjects();
-        
-        return res.status(201).end('saved image metadata');
 
       } catch (err) {
         // logger.error('🔥 error: %o', e);
+        console.log(err);
         return next(err);
       }
     },
   );
 
-  // get images
-  route.get(
-    '/',
-    async (req, res, next) => {
-      const imageServiceInstance = new ImagesService;
-      const images = imageService.getImages(req);
-      return res.status(202).json(images);
-    },
-  );
+  // // get images
+  // route.get(
+  //   '/',
+  //   async (req, res, next) => {
+  //     //...
+  //     return res.status(202).json(images);
+  //   },
+  // );
 
-  // update image
+  // // update image
   // route.post(
   //   '/update',
   //   async (req, res, next) => {
