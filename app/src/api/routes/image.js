@@ -22,7 +22,8 @@ const imageRouter = (app) => {
         await imgService.saveImage();
 
         // Kick off detection job
-        const mlService = new MLService(imgService.md, 'megadetector');
+        const metadata = imgService.metadata;
+        const mlService = new MLService(metadata, 'megadetector');
         await mlService.detectObjects();
         
         return res.status(201).end('saved image metadata');

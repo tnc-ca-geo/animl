@@ -10,17 +10,24 @@ class ImageService {
 
   constructor(imageMetaData) {
     this.formats = config.timeFormats;
-    this.imageMetaData = imageMetaData;
-    this.md = {};
-  }
+    this.md = imageMetaData;
+  };
 
   async init() {
     try {
-      this.md.deployment = await this.mapToDeployment();
+      this.md.deployment = await this.mapImgToDeployment();
     } catch {
       throw new Error('Unable to find deployment for this image');
     }
   };
+
+  get metadata() {
+    if (!this.md.deployment) {
+      throw new Error('No deployment for this image');
+    } else {
+      return this.md;
+    }
+  }
 
   async getImage() {
     try {
@@ -43,12 +50,11 @@ class ImageService {
     }
   };
 
-  async mapToDeployment() {
+  async mapImgToDeployment() {
     try {
       const dto = this.md.dateTimeOriginal;
-      const sn = this.md.serialNumber;
       const deployments = await DeploymentModel.find({
-        'camera.serialNumber': sn 
+        'camera.serialNumber': this.md.serialNumber 
       });
       const deploymentMatch = deployments.filter(dep => {
         dep.end = dep.end ? dep.end : moment();
