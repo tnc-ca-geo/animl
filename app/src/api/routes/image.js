@@ -11,10 +11,11 @@ const imageRouter = (app) => {
   // save images
   route.post(
     '/save',
-    imagesMiddleware.validateFields,
+    imagesMiddleware.validate,
+    imagesMiddleware.sanitize,
     async (req, res, next) => {
       try {
-        
+                
         // Save image
         const imgService = new ImagesService(req.body);
         await imgService.init();

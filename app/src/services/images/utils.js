@@ -1,22 +1,6 @@
 const moment = require('moment');
 const ImageModel = require('../../models/image');
-const config = require('../../config')
 
-
-const prepMetaData = (md) => {
-  let mdProcessed = {};
-  // If second char in key is uppercase, 
-  // assume it's an acronym & leave it, else camel case the key
-  for (let key in md) {
-    const newKey = !(key.charAt(1) == key.charAt(1).toUpperCase())
-      ? key.charAt(0).toLowerCase() + key.slice(1)
-      : key;
-    mdProcessed[newKey] = md[key];
-  };
-  const dto = moment(mdProcessed.dateTimeOriginal, config.timeFormats.exif);
-  mdProcessed.dateTimeOriginal = dto;
-  return mdProcessed;
-};
 
 // Unpack user-set exif tags
 const getUserSetData = (md) => {
@@ -93,6 +77,5 @@ const mapMetaToModel = (md) => {
 
 
 module.exports = {
-  prepMetaData,
   mapMetaToModel,
 };

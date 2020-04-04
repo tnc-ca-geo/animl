@@ -16,7 +16,6 @@ class ImageService {
 
   async init() {
     try {
-      this.md = utils.prepMetaData(this.imageMetaData);
       this.md.deployment = await this.mapToDeployment();
     } catch {
       throw new Error('Unable to find deployment for this image');
