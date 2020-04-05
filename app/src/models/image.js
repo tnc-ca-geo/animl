@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const shared = require('./shared')
 const Schema = mongoose.Schema;
-
+const { logger } = require('../logger');
 
 /*
  * ValidationSchema
@@ -70,8 +70,8 @@ ImageSchema.index(
 
 ImageSchema.index({ deployment: 1 });
 
-ImageSchema.on('index', function(error) {
-  console.log('indexing error', error.message);
+ImageSchema.on('index', (e) => {
+  logger.error('Indexing error', e);
 });
 
 module.exports = mongoose.model('Image', ImageSchema);

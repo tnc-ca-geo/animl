@@ -2,6 +2,7 @@ const express = require('express');
 const ImagesService = require('../../services/images');
 const imagesMiddleware = require('../middleware/images')
 const MLService = require('../../services/ml');
+const { logger } = require('../../logger')
 
 const route = express.Router();
 
@@ -20,7 +21,7 @@ const imageRouter = (app) => {
         const imgService = new ImagesService(req.body);
         await imgService.init();
         await imgService.saveImage();
-        res.status(201).send('saved image metadata');
+        res.status(201).send('Saved image metadata');
 
         // Kick off detection job
         const metadata = imgService.metadata;
@@ -28,10 +29,9 @@ const imageRouter = (app) => {
         mlService.init();
         await mlService.detectObjects();
 
-      } catch (err) {
-        // logger.error('🔥 error: %o', e);
-        console.log(err);
-        return next(err);
+      } catch (e) {
+        logger.error('Error handling image post request - ', e)
+        return next(e);
       }
     },
   );

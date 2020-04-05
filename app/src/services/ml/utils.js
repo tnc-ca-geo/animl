@@ -16,7 +16,6 @@ const parseDetectorResponse = (data, modelConfig) => {
       });
     }
   }
-  console.log('detections above threshold: ', detections);
   return detections;
 };
 

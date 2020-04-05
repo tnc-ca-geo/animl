@@ -7,7 +7,7 @@ const config = {
 
   port: process.env.PORT,
   
-  databaseURL: process.env.DB_URI,
+  dbURL: process.env.DB_URI,
 
   aws: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 

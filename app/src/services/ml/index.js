@@ -5,6 +5,7 @@ const ImageModel = require('../../models/image');
 const ModelModel = require('../../models/model');
 const utils = require('./utils');
 const config = require('../../config');
+const { logger } = require('../../logger');
 
 
 class MLService {
@@ -26,9 +27,9 @@ class MLService {
         'name': this.modelConfig.name,
         'version': this.modelConfig.version
       });
-    } catch {
-      console.log('catching error in getModel()')
-      throw new Error('Error finding model record');
+    }
+    catch (e) {
+      logger.error('Error finding model record - ', e);
     }
   };
 
@@ -38,10 +39,11 @@ class MLService {
       if (!currModel.length) {
         const newModel = new ModelModel(this.modelConfig)
         await newModel.save();
+        logger.info('Saved model record');
       }
-    } catch {
-      console.log('catching error in saveModel()')
-      throw new Error('Error saving model record');
+    }
+    catch (e) {
+      logger.error('Error saving model record - ', e);
     }
   };
 
@@ -56,9 +58,9 @@ class MLService {
         labeledDate: moment(),
         model: model[0]._id
       }));
-    } catch {
-      console.log('catching error in createLabels()')
-      throw new Error('Error creating labels from ML predictions');
+    }
+    catch (e) {
+      logger.error('Error creating labels from ML predictions - ', e);
     }
   };
 
@@ -67,37 +69,40 @@ class MLService {
       const detections = utils.parseDetectorResponse(response, this.modelConfig);
       const labels = await this.createLabels(detections, this.modelConfig);
       if (labels.length){ 
+        logger.info('Detected objects in image: ', labels);
         const query = { 
           'camera.serialNumber': this.md.serialNumber,
           'dateTimeOriginal': this.md.dateTimeOriginal,
         };
         const images = await ImageModel.find(query);
         const imgToUpdate = images[0];
-        console.log('found image to update with labels: ', imgToUpdate);
         imgToUpdate.labels = imgToUpdate.labels.concat(labels);
         imgToUpdate.save();
-        console.log('successfully updated image record');
+        logger.info('Updated image record with new labels');
       } else {
-        console.log('no objects detected')
+        logger.info('No objects detected in image')
       }
-    } catch {
-      console.log('catching error in handlePredictions()')
-      throw new Error('Error updating the image with new labels')
+    }
+    catch (e) {
+      logger.error('Error updating the image with new labels - ', e)
     }
   };
 
   async detectObjects() {
     try {
-      if (!this.invokeEndpoint) { return; }
+      if (!this.invokeEndpoint) { 
+        throw new Error('Sagemaker runtime has not been initialized') 
+      }
+      logger.info('Attempting to detect objects')
       const response = await this.invokeEndpoint({
         Body: Buffer.from(this.md.key),
         EndpointName: this.modelConfig.endpointName,
         ContentType: 'application/json',
       });
       this.handlePrediction(response);
-    } catch {
-      console.log('catching error in detectObjects()')
-      throw new Error('Error invoking model endpoint');
+    }
+    catch (e) {
+      logger.error('Error invoking model endpoint - ', e);
     }
   };
 
