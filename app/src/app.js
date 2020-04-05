@@ -14,16 +14,16 @@ let app = express();
 
 mongoose
   .connect(config.dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .catch(err => logger.error('database connection error - ', err));
+  .catch((e) => logger.error('database connection error - ', e));
 mongoose.set('useFindAndModify', false);
-mongoose.connection.on('error', err => {
-  logger.error('database error - ', err)
+mongoose.connection.on('error', (e) => {
+  logger.error('database error - ', e);
 });
 
 app.use(express.static('../frontend/build'));
-app.use(morgan('combined', { 
-  stream: { write: message => logger.info(message) }
-}));
+app.use(
+  morgan('combined', { stream: { write: (message) => logger.info(message) } })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -45,11 +45,11 @@ app.use((err, req, res, next) => {
 
 // Create a deployment and model record from config if they don't exist
 // TODO: the deployment record is just for testing. remove later
-config.deployments.forEach(depConfig => {
+config.deployments.forEach((depConfig) => {
   const deploymentService = new DeploymentService(depConfig);
   deploymentService.saveDeployment();
 });
-config.models.forEach(modelConfig => {
+config.models.forEach((modelConfig) => {
   const mlService = new MLService({}, modelConfig.name);
   mlService.saveModel();
 });
@@ -59,9 +59,9 @@ process.on('unhandledRejection', (reason, p) => {
   throw reason;
 });
 
-process.on('uncaughtException', err => {
-  logger.error('There was an uncaught error', err);
+process.on('uncaughtException', (e) => {
+  logger.error('There was an uncaught error', e);
   process.exit(1);
-})
+});
 
 module.exports = app;

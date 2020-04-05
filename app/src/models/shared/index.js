@@ -2,27 +2,25 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-
 const PointSchema = new Schema({
-  type:                { type: String, enum: ['Point'], required: true },
-  coordinates:         { type: [Number], required: true }
+  type: { type: String, enum: ['Point'], required: true },
+  coordinates: { type: [Number], required: true },
 });
 
 let LocationSchema = new Schema({
-  geometry:            { type: PointSchema, required: true },
-  altitude:            { type: String },
-  // azimuth:             { type: Number },
+  geometry: { type: PointSchema, required: true },
+  altitude: { type: String },
+  // azimuth: { type: Number },
 });
 
 let CameraSchema = new Schema({
-  make:                { type: String, default: 'unknown', required: true },
-  model:               { type: String },
-  serialNumber:        { type: String, required: true },
+  make: { type: String, default: 'unknown', required: true },
+  model: { type: String },
+  serialNumber: { type: String, required: true },
 });
 
-
 module.exports = {
-  PointSchema, 
+  PointSchema,
   LocationSchema,
   CameraSchema,
-}
+};

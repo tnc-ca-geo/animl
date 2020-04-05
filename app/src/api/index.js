@@ -6,6 +6,6 @@ const routes = () => {
   imageRouter(app);
 
   return app;
-}
+};
 
 module.exports = routes;

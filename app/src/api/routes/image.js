@@ -1,8 +1,8 @@
 const express = require('express');
 const ImagesService = require('../../services/images');
-const imagesMiddleware = require('../middleware/images')
+const imagesMiddleware = require('../middleware/images');
 const MLService = require('../../services/ml');
-const { logger } = require('../../logger')
+const { logger } = require('../../logger');
 
 const route = express.Router();
 
@@ -16,7 +16,6 @@ const imageRouter = (app) => {
     imagesMiddleware.sanitize,
     async (req, res, next) => {
       try {
-                
         // Save image
         const imgService = new ImagesService(req.body);
         await imgService.init();
@@ -28,12 +27,11 @@ const imageRouter = (app) => {
         const mlService = new MLService(metadata, 'megadetector');
         mlService.init();
         await mlService.detectObjects();
-
       } catch (e) {
-        logger.error('Error handling image post request - ', e)
+        logger.error('Error handling image post request - ', e);
         return next(e);
       }
-    },
+    }
   );
 
   // // get images
@@ -52,8 +50,6 @@ const imageRouter = (app) => {
   //     //...
   //   },
   // );
-
 };
-
 
 module.exports = imageRouter;

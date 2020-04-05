@@ -4,14 +4,14 @@ const Schema = mongoose.Schema;
 /*
  * ModelPerformanceSchema
  * invocationCount - number of times the model has been invoked
- * correctCount  - number of times a reviewer validated the prediciton 
- * incorrectCount - number of times a reviewer invalidated the prediciton 
+ * correctCount  - number of times a reviewer validated the prediciton
+ * incorrectCount - number of times a reviewer invalidated the prediciton
  */
 
 let ModelPerformanceSchema = new Schema({
-  invocationCount:      { type: Number, required: true, default: 0 },
-  validationCcount:     { type: Number, required: true, default: 0 },
-  invalidationCount:    { type: Number, required: true, default: 0 },
+  invocationCount: { type: Number, required: true, default: 0 },
+  validationCcount: { type: Number, required: true, default: 0 },
+  invalidationCount: { type: Number, required: true, default: 0 },
 });
 
 /*
@@ -22,14 +22,13 @@ let ModelPerformanceSchema = new Schema({
  */
 
 let ModelSchema = new Schema({
-  name:                 { type: String, required: true },
-  description:          { type: String },
-  endpointName:         { type: String, required: true },
-  version:              { type: String, required: true },
-  renderThreshold:      { type: Number },
-  categories:           { type: Map },
-  performance:          { type: ModelPerformanceSchema }
+  name: { type: String, required: true },
+  description: { type: String },
+  endpointName: { type: String, required: true },
+  version: { type: String, required: true },
+  renderThreshold: { type: Number },
+  categories: { type: Map },
+  performance: { type: ModelPerformanceSchema },
 });
-
 
 module.exports = mongoose.model('Model', ModelSchema);
