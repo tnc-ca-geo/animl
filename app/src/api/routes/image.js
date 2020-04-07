@@ -1,6 +1,6 @@
 const express = require('express');
-const ImagesService = require('../../services/images');
-const imagesMiddleware = require('../middleware/images');
+const ImageService = require('../../services/image');
+const imagesMiddleware = require('../middleware/imageMiddleware');
 const MLService = require('../../services/ml');
 const { logger } = require('../../logger');
 
@@ -16,14 +16,21 @@ const imageRouter = (app) => {
     imagesMiddleware.sanitize,
     async (req, res, next) => {
       try {
+        // TODO: consider separating this code into a controller that receives
+        // a context object with the request payload rather than the req
+        // itself. The challenge is how to return when the the image has been
+        // saved to the DB so that the router can respond to the client,
+        // but allow the controller function to continue on and 
+        // trigger the detection job.
+
         // Save image
-        const imgService = new ImagesService(req.body);
-        await imgService.init();
-        await imgService.saveImage();
+        const imageService = new ImageService(req.body);
+        await imageService.init();
+        await imageService.saveImage();
         res.status(201).send('Saved image metadata');
 
         // Kick off detection job
-        const metadata = imgService.metadata;
+        const metadata = imageService.metadata;
         const mlService = new MLService(metadata, 'megadetector');
         mlService.init();
         await mlService.detectObjects();

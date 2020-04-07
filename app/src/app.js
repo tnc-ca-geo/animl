@@ -7,7 +7,7 @@ const { logger } = require('./logger');
 const config = require('./config');
 const mongoose = require('mongoose');
 const routes = require('./api');
-const DeploymentService = require('./services/deployments');
+const DeploymentService = require('./services/deployment');
 const MLService = require('./services/ml');
 
 let app = express();
