@@ -1,10 +1,17 @@
 const dotenv = require('dotenv');
+
 // config() will read your .env file, parse the contents,
 // assign it to process.env.
-dotenv.config();
+const envFound = dotenv.config();
+
+if (!envFound) {
+  // This error should crash whole process
+  throw new Error("⚠️  Couldn't find .env file  ⚠️");
+}
 
 const config = {
   port: process.env.PORT,
+  testPort: process.env.TEST_PORT,
   dbURL: process.env.DB_URI,
   aws: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,

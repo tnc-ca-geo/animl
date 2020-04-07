@@ -50,6 +50,14 @@ const imageRouter = (app) => {
   //     //...
   //   },
   // );
+
+  // Testing jest
+  route.post(
+    '/',
+    async (req, res, next) => {
+      res.status(201).send('testing jest');
+    },
+  );
 };
 
 module.exports = imageRouter;

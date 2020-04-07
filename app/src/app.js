@@ -12,13 +12,15 @@ const MLService = require('./services/ml');
 
 let app = express();
 
-mongoose
-  .connect(config.dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .catch((e) => logger.error('database connection error - ', e));
-mongoose.set('useFindAndModify', false);
-mongoose.connection.on('error', (e) => {
-  logger.error('database error - ', e);
-});
+if (process.env.NODE_ENV != 'test') {
+  mongoose
+    .connect(config.dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .catch((e) => logger.error('database connection error - ', e));
+  mongoose.set('useFindAndModify', false);
+  mongoose.connection.on('error', (e) => {
+    logger.error('database error - ', e);
+  });
+}
 
 app.use(express.static('../frontend/build'));
 app.use(
