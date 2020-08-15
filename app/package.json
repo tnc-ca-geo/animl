@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./src/bin/www",
     "devstart": "nodemon ./src/bin/www",
+    "daemonstart": "pm2 start ecosystem.config.js",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.9.3",
     "morgan": "~1.9.1",
+    "pm2": "^4.4.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {

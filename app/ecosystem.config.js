@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'animl',
-      script: './app/src/app.js',
+      script: './src/bin/www',
       instances: 1,
       autorestart: true,
       watch: false,
