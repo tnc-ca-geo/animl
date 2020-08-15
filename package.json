@@ -4,6 +4,7 @@
   "description": "Cloud-based platform for managing camera trap data",
   "main": "index.js",
   "scripts": {
+    "start-daemon": "pm2 start ecosystem.config.js",
     "start-app": "npm run devstart --prefix app",
     "start-all": "concurrently --kill-others-on-fail \"npm run start-app\" \"npm run start-frontend-async\"",
     "start-frontend-solo": "npm start --prefix frontend",
@@ -20,7 +21,8 @@
   },
   "homepage": "https://github.com/tnc-ca-geo/animl#readme",
   "dependencies": {
-    "concurrently": "^5.1.0"
+    "concurrently": "^5.1.0",
+    "pm2": "^4.4.0"
   },
   "devDependencies": {}
 }

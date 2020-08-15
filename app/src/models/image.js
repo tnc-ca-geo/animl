@@ -31,6 +31,7 @@ let LabelSchema = new Schema({
   labeledDate: { type: Date, default: Date.now, required: true },
   validation: { type: ValidationSchema, requried: true },
   model: { type: Schema.Types.ObjectId, ref: 'Model' },
+  // might need to add a field for user if it's a manual label
 });
 
 /*
