@@ -4,8 +4,8 @@
   "description": "Backend application for camera trap data managment platform",
   "private": true,
   "scripts": {
-    "start": "node ./src/bin/www",
-    "devstart": "nodemon ./src/bin/www",
+    "start": "NODE_ENV=production node ./src/bin/www",
+    "devstart": "NODE_ENV=development nodemon ./src/bin/www",
     "daemonstart": "pm2 start ecosystem.config.js",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },

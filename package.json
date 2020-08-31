@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start-daemon": "npm run daemonstart --prefix app",
-    "start-app": "npm run devstart --prefix app",
-    "start-all": "concurrently --kill-others-on-fail \"npm run start-app\" \"npm run start-frontend-async\"",
+    "start-app-dev": "npm run devstart --prefix app",
+    "start-all": "concurrently --kill-others-on-fail \"npm run start-app-dev\" \"npm run start-frontend-async\"",
     "start-frontend-solo": "npm start --prefix frontend",
     "start-frontend-async": "node start-frontend-async.js"
   },

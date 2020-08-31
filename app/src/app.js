@@ -22,14 +22,16 @@ if (process.env.NODE_ENV != 'test') {
   });
 }
 
-app.use(express.static('../frontend/build'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('../frontend/build'));
+}
+
 app.use(
   morgan('combined', { stream: { write: (message) => logger.info(message) } })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(config.api.prefix, routes());
 
 // catch 404 and forward to error handler
