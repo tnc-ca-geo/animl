@@ -1,6 +1,10 @@
 # Animl
 A platform for managing camera trap data
 
+NOTE: THIS REPO IS BEING DEPRECATED IN FAVOR OF:
+http://github.com/tnc-ca-geo/animl-api
+http://github.com/tnc-ca-geo/animl-frontend
+
 ## `Related repos`
 
 - Animl base program      http://github.com/tnc-ca-geo/animl-base
