@@ -10,7 +10,7 @@
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "dependencies": {
-    "aws-sdk": "^2.653.0",
+    "aws-sdk": "^2.814.0",
     "cookie-parser": "^1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
